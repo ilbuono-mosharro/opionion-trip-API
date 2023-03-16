@@ -44,6 +44,7 @@ urlpatterns = [
     re_path(r'^robots\.txt', include('robots.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api-blog/', include('blog.api.urls')),
-
+    path('api-accounts/', include('accounts.api.urls')),
+    path('api-cities/', include('cities.api.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                              document_root=settings.MEDIA_ROOT)
