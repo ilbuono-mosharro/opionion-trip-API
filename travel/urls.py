@@ -46,5 +46,6 @@ urlpatterns = [
     path('api-blog/', include('blog.api.urls')),
     path('api-accounts/', include('accounts.api.urls')),
     path('api-cities/', include('cities.api.urls')),
+    path('api-attractions/', include('places.api.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                              document_root=settings.MEDIA_ROOT)
