@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from reviews.api.serializers import ReviewRatingSerializer
 from .serializer import AttractionsSerializer, ImageAttractionSerializer
 from ..models import Attractions, ImageAttractions
 from cities.api.permissions import IsOwnerOrReadOnly, IsOwner
@@ -52,6 +52,30 @@ class AttractionViewSet(viewsets.ModelViewSet):
             attraction.users_wishlist.add(self.request.user)
         serializer = self.get_serializer(attraction)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path="add-review", url_name="add_review")
+    def add_review(self, request, pk=None, *args, **kwargs):
+        attraction = self.get_object()
+        serializer = ReviewRatingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user, attraction=attraction, ip=self.request.META.get("REMOTE_ADDR"))
+            return Response(serializer.data, status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_name="attraction-reviews", url_path="attraction_reviews")
+    def attraction_reviews(self, request, pk=None, *args, **kwargs):
+        attraction = self.get_object()
+        queryset = attraction.review_attraction.filter(status="AP")
+        serializer = ReviewRatingSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        queryset = Attractions.objects.all()
+        search = self.request.query_params.get('search', None)
+        if search is not None:
+            queryset = queryset.filter(name__icontains=search)
+        return queryset
 
 
 class ImageAttractionUd(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
