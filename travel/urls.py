@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
+from rest_framework.authtoken import views
 
 from accounts.forms import EmailValidationOnForgotPassword
 from .sitemaps import StaticViewSitemap, CitySitemap, AttractionsSitemap
@@ -42,7 +43,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     re_path(r'^robots\.txt', include('robots.urls')),
-    path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/', views.obtain_auth_token),
     path('api-blog/', include('blog.api.urls')),
     path('api-accounts/', include('accounts.api.urls')),
     path('api-cities/', include('cities.api.urls')),
